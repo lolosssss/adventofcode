@@ -9,8 +9,10 @@ def calibration(data):
   nums = [re.findall('\d', line) for line in lines]
   return sum((int(n[0] + n[-1])) for n in nums)
 
+# part one
 print(calibration(data))
 
+# part two
 """
 将单词替换成数字
 需要保持原单词前后连续，防止因为替换顺序引起的错误，例如：
