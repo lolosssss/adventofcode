@@ -1,4 +1,4 @@
-with open('./test', 'r') as f:
+with open('./input', 'r') as f:
   data = f.read().strip()
 
 movements = {
@@ -23,17 +23,13 @@ n2d = {
 }
 
 
-def get_size(lines, part2):
+def get_size(lines):
   wa = 0
   w_min, w_max = 0, 0
   ha = 0
   h_min, h_max = 0, 0
   for line in lines:
     d, l, cl = line.split(' ')
-    if part2:
-      cl = cl[2:-1]
-      d = n2d[cl[-1]]
-      l = int(cl[:-1], 16)
     l = int(l)
     m = movements[d]
     ha, wa = ha + m[0] * l, wa + m[1] * l
@@ -42,17 +38,13 @@ def get_size(lines, part2):
   return (h_max - h_min + 1, w_max - w_min + 1, -h_min, -w_min)
 
 
-def solve(lines, part2):
-  h, w, r, c = get_size(lines, part2)
+def solve(lines):
+  h, w, r, c = get_size(lines)
   grids = [[' ' for _ in range(w)] for _ in range(h)]
 
   grids[r][c] = '#'
   for line in lines:
     d, l, cl = line.split(' ')
-    if part2:
-      cl = cl[2:-1]
-      d = n2d[cl[-1]]
-      l = int(cl[:-1], 16)
     l = int(l)
     m = movements[d]
     for _ in range(l):
@@ -60,25 +52,21 @@ def solve(lines, part2):
       grids[r][c] = '#'
 
   fills = [[col for col in row] for row in grids]
-  # for line in lines:
-  #   d, l, cl = line.split(' ')
-  #   if part2:
-  #     cl = cl[2:-1]
-  #     d = n2d[cl[-1]]
-  #     l = int(cl[:-1], 16)
-  #   l = int(l)
-  #   m = movements[d]
-  #   pd = pds[d]
-  #   for _ in range(l):
-  #     pr, pc = r + pd[0], c + pd[1]
-  #     while grids[pr][pc] != '#':
-  #       fills[pr][pc] = '#'
-  #       pr, pc = pr + pd[0], pc + pd[1]
-  #     r, c = r + m[0], c + m[1]
-  #   pr, pc = r + pd[0], c + pd[1]
-  #   while grids[pr][pc] != '#':
-  #     fills[pr][pc] = '#'
-  #     pr, pc = pr + pd[0], pc + pd[1]
+  for line in lines:
+    d, l, cl = line.split(' ')
+    l = int(l)
+    m = movements[d]
+    pd = pds[d]
+    for _ in range(l):
+      pr, pc = r + pd[0], c + pd[1]
+      while grids[pr][pc] != '#':
+        fills[pr][pc] = '#'
+        pr, pc = pr + pd[0], pc + pd[1]
+      r, c = r + m[0], c + m[1]
+    pr, pc = r + pd[0], c + pd[1]
+    while grids[pr][pc] != '#':
+      fills[pr][pc] = '#'
+      pr, pc = pr + pd[0], pc + pd[1]
 
   # for row in fills:
   #   print(''.join(row))
@@ -90,6 +78,22 @@ def solve(lines, part2):
   print(total)
 
 
+def solve_2(lines):
+  # shoelace formula
+  r, c = 0, 0
+  total = 0
+  for line in lines:
+    h, ds = line[-7:-2], line[-2]
+    d, l = n2d[ds], int(h, 16)
+    m = movements[d]
+    nr = r + m[0] * l
+    nc = c + m[1] * l
+    total += l + nr * c - nc * r
+    r, c = nr, nc
+  print(total // 2 + 1)
+
+
 lines = data.split('\n')
-solve(lines, False)
-solve(lines, True)
+solve(lines)
+
+solve_2(lines)
