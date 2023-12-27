@@ -14,8 +14,7 @@ def solve(grids, start, l):
   pv = 0
   pvpv = 0
 
-  for i in range(l):
-    print(i, end='\r')
+  for _ in range(l):
     nq = deque([])
     while q:
       p = q.popleft()
@@ -51,11 +50,12 @@ def solve_2(grids, start, l = 26501365):
   q = deque([(0, 0, start[0], start[1], 0)])
   while q:
     gr, gc, r, c, d = q.popleft()
-    gr = r // row
-    gc = c // col
+    gr += r // row
+    gc += c // col
     r = r % row
     c = c % col
-    if not (0 <= r < row and 0 < c < col and grids[r][c] != '#'):
+    # print(gr, gc, r, c)
+    if not (0 <= r < row and 0 <= c < col and grids[r][c] != '#'):
       continue
     if (gr, gc, r, c) in cache:
       continue
@@ -65,10 +65,21 @@ def solve_2(grids, start, l = 26501365):
     for dr, dc in [[-1, 0], [0, 1], [1, 0], [0, -1]]:
       q.append((gr, gc, r + dr, c + dc, d + 1))
 
+  opt = [-3, -2, -1, 0, 1, 2, 3]
+  for gr in opt:
+    for r in range(row):
+      for gc in opt:
+        for c in range(col):
+          if (gr, gc, r, c) in cache:
+            print(cache[(gr, gc, r, c)], end='')
+          else:
+            print('#', end='')
+      print('')
+
   # res = 0
   # for r in range(row):
   #   for c in range(col):
-  #     if (0, 0, r, c) in D:
+  #     if (0, 0, r, c) in cache:
   #       opt = [-3, -2, -1, 0, 1, 2, 3]
   #       for gr in opt:
   #         for gc in opt:
