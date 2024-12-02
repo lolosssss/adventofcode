@@ -20,11 +20,7 @@ def can_move(tile, d):
 
 
 
-def recur(grids, p, e, flags, row, col, cache):
-  k = (p[0], p[1])
-  # if k in cache and cache[k] == -1:
-    # return -1
-
+def recur(grids, p, e, flags, row, col):
   maximum = -1
   for move in movements:
     d = move['d']
@@ -34,11 +30,10 @@ def recur(grids, p, e, flags, row, col, cache):
       return 1
     if 0 <= nr < row and 0 <= nc < col and grids[nr][nc] != '#' and flags[nr][nc] != 1 and can_move(grids[nr][nc], d):
       flags[nr][nc] = 1
-      res = recur(grids, [nr, nc], e, flags, row, col, cache)
+      res = recur(grids, [nr, nc], e, flags, row, col)
       flags[nr][nc] = 0
       if res != -1:
         maximum = max(res, maximum)
-  cache[k] = maximum
 
   return maximum + 1 if (maximum != -1) else -1
 
@@ -47,8 +42,7 @@ def solve(grids):
   s = [0, 1]
   e = [len(grids) - 1, len(grids[0]) - 2]
   flags = [[1 if c == '#' else 0 for c in r] for r in grids]
-  cache = {}
-  longest = recur(grids, s, e, flags, len(grids), len(grids[0]), cache)
+  longest = recur(grids, s, e, flags, len(grids), len(grids[0]))
   print(longest)
 
 
