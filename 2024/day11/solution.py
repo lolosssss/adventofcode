@@ -23,9 +23,37 @@ def solve1(count):
 print(f'part one: {solve1(25)}')
 
 
+def update(d, k, v):
+  if k in d:
+    d[k] += v
+  else:
+    d[k] = v
+
+
 def solve2(count):
-  os = [s for s in stones]
-  return len(os)
+  os = dict()
+  for s in stones:
+    if s in os:
+      os[s] += 1
+    else:
+      os[s] = 1
+
+  for _ in range(count):
+    ns = dict()
+    for k in os.keys():
+      if k == 0:
+        update(ns, 1, os[k])
+      elif len(str(k)) % 2 == 0:
+        h = len(str(k)) // 2
+        l = int(str(k)[:h])
+        r = int(str(k)[h:])
+        update(ns, l, os[k])
+        update(ns, r, os[k])
+      else:
+        update(ns, k * 2024, os[k])
+    os = ns
+
+  return sum(os.values())
 
 
 print(f'part two: {solve2(75)}')
