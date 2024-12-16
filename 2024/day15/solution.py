@@ -67,14 +67,43 @@ def solve1():
   return total
 
 # test set result: 10092
-# print(f'part one: {solve1()}')
+print(f'part one: {solve1()}')
 
 
-def check_and_push(grid, cp, dir):
+def check(grid, cp, dir):
   if grid[cp[0]][cp[1]] == '.':
     return True
   if grid[cp[0]][cp[1]] == '#':
     return False
+  if dir in ['^', 'v']:
+    m = dirs[dir]
+    np1 = (cp[0] + m[0], cp[1] + m[1])
+    if grid[cp[0]][cp[1]] == '[':
+      np2 = (cp[0] + m[0], cp[1] + m[1] + 1)
+    if grid[cp[0]][cp[1]] == ']':
+      np2 = (cp[0] + m[0], cp[1] + m[1] - 1)
+    if grid[np1[0]][np1[1]] == '.' and grid[np2[0]][np2[1]] == '.':
+      return True
+    elif grid[np1[0]][np1[1]] == '#' or grid[np2[0]][np2[1]] == '#':
+      return False
+    else:
+      canMove = check(grid, np1, dir) and check(grid, np2, dir)
+      return canMove
+  else:
+    m = dirs[dir]
+    np = (cp[0] + m[0], cp[1] + m[1])
+    if grid[np[0]][np[1]] == '.':
+      return True
+    elif grid[np[0]][np[1]] == '#':
+      return False
+    else:
+      canMove = check(grid, np, dir)
+      return canMove
+
+
+def push(grid, cp, dir):
+  if grid[cp[0]][cp[1]] in ['.', '#']:
+    return
   if dir in ['^', 'v']:
     m = dirs[dir]
     np1 = (cp[0] + m[0], cp[1] + m[1])
@@ -89,32 +118,31 @@ def check_and_push(grid, cp, dir):
       grid[np2[0]][np2[1]] = grid[cp2[0]][cp2[1]]
       grid[cp[0]][cp[1]] = '.'
       grid[cp2[0]][cp2[1]] = '.'
-      return True
+      return
     elif grid[np1[0]][np1[1]] == '#' or grid[np2[0]][np2[1]] == '#':
-      return False
+      return
     else:
-      canMove = check_and_push(grid, np1, dir) and check_and_push(grid, np2, dir)
-      if canMove:
-        grid[np1[0]][np1[1]] = grid[cp[0]][cp[1]]
-        grid[np2[0]][np2[1]] = grid[cp2[0]][cp2[1]]
-        grid[cp[0]][cp[1]] = '.'
-        grid[cp2[0]][cp2[1]] = '.'
-      return canMove
+      push(grid, np1, dir)
+      push(grid, np2, dir)
+      grid[np1[0]][np1[1]] = grid[cp[0]][cp[1]]
+      grid[np2[0]][np2[1]] = grid[cp2[0]][cp2[1]]
+      grid[cp[0]][cp[1]] = '.'
+      grid[cp2[0]][cp2[1]] = '.'
+      return
   else:
     m = dirs[dir]
     np = (cp[0] + m[0], cp[1] + m[1])
     if grid[np[0]][np[1]] == '.':
       grid[np[0]][np[1]] = grid[cp[0]][cp[1]]
       grid[cp[0]][cp[1]] = '.'
-      return True
+      return
     elif grid[np[0]][np[1]] == '#':
-      return False
+      return
     else:
-      canMove = check_and_push(grid, np, dir)
-      if canMove:
-        grid[np[0]][np[1]] = grid[cp[0]][cp[1]]
-        grid[cp[0]][cp[1]] = '.'
-      return canMove
+      push(grid, np, dir)
+      grid[np[0]][np[1]] = grid[cp[0]][cp[1]]
+      grid[cp[0]][cp[1]] = '.'
+      return
 
 
 def solve2():
@@ -157,15 +185,13 @@ def solve2():
     elif grid[np[0]][np[1]] == '#':
       print_grid(grid, move)
     else:
-      canMove = check_and_push(grid, np, move)
+      canMove = check(grid, np, move)
       if canMove:
+        push(grid, np, move)
         grid[np[0]][np[1]] = '@'
         grid[cp[0]][cp[1]] = '.'
         cp = np
       print_grid(grid, move)
-
-  for r in grid:
-    print(''.join(r))
 
   total = 0
   for r in range(nrow):
