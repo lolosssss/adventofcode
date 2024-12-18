@@ -39,6 +39,23 @@ def print_maze(maz, cp, flags = []):
   input()
 
 
+def dfs(maz, flags, cp, tv, seen: set, his: list):
+  if maz[cp[0]][cp[1]] == 'S':
+    for h in his:
+      seen.add(h)
+    return
+  for i in range(4):
+    d = dirs[i]
+    np = (cp[0] + d[0], cp[1] + d[1])
+    if maz[np[0]][np[1]] != '#':
+      for j in range(4):
+        nv = flags[np[0]][np[1]][j]
+        if nv in [tv - 1, tv - 1001]:
+          his.append(np)
+          dfs(maz, flags, np, nv, seen, his)
+          his.pop()
+
+
 def bfs(maz):
   flags = [[[0, 0, 0, 0] for c in range(col)] for r in range(row)]
   queue = [(start[0], start[1], 1, 0)]
@@ -65,12 +82,21 @@ def bfs(maz):
           queue.append(next)
   print_maze(maz, start, flags)
 
-  return lowest
+  seen = set()
+  his = [end]
+  dfs(maz, flags, end, lowest, seen, his)
+
+  for p in seen:
+    maz[p[0]][p[1]] = 'O'
+  for r in maz:
+    print(''.join(r))
+
+  return (lowest, len(seen))
 
 
 def solve():
   return bfs(maze)
 
 
-print(f'part one: {solve()}')
+print(f'part (one, two): {solve()}')
 
