@@ -55,6 +55,9 @@ def solve1():
     for j in range(i):
       maze[bs[j][0]][bs[j][1]] = '#'
     count = bfs(maze)
+    if count == 999999999:
+      print(bs[i-1])
+      return shortest
     shortest = min(shortest, count)
   return shortest
 
