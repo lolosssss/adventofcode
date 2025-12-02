@@ -24,3 +24,25 @@ def solve1():
 
 
 print(f'part one: {solve1()}')
+
+
+def solve2():
+  sum = 0
+  for start, end in ranges:
+    current = start
+    origin = str(current)
+    s = origin
+    while current <= end:
+      origin = str(current)
+      s = origin
+      size = len(s)
+      for _ in range(size - 1):
+        s = s[1:] + s[0]
+        if s == origin:
+          sum += current
+          break
+      current += 1
+  return sum
+
+
+print(f'part two: {solve2()}')
