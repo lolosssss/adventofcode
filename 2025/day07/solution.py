@@ -40,3 +40,30 @@ def solve1():
 
 print(f'part one: {solve1()}')
 
+
+def search_paths(cr, cc, his):
+  while cr < row and manifold[cr][cc] != '^':
+    cr += 1
+  if cr >= row:
+    return 1
+  count = 0
+  if manifold[cr][cc] == '^':
+    if f'{cr},{cc}' in his:
+      return his[f'{cr},{cc}']
+    if cc > 0:
+      count += search_paths(cr, cc - 1, his)
+    if cc < col - 1:
+      count += search_paths(cr, cc + 1, his)
+    his[f'{cr},{cc}'] = count
+  return count
+
+
+def solve2():
+  his = dict()
+  cr, cc = start
+  count = search_paths(cr, cc, his)
+  return count
+
+
+print(f'part two: {solve2()}')
+
